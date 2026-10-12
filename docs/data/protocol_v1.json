@@ -1,0 +1,60 @@
+{
+  "protocol_version": "v1",
+  "seed": 50000000,
+  "r_cm": 1.855,
+  "R_cm": 7.65,
+  "batch_size": 200,
+  "minimum_batches": 10,
+  "maximum_batches": 30,
+  "improvement_window_batches": 5,
+  "required_random_hits": 5,
+  "tolerance_cm": 7.65e-07,
+  "height_threshold_cm": 7.650000000000002e-05,
+  "polish_threshold_cm": 7.65e-07,
+  "iterations": 500,
+  "polish_iterations": 3000,
+  "python": "3.12.14",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "floor_enabled": true,
+  "height_lower_bound_over_R": 1e-08,
+  "sphere_counts": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "independent_campaigns": 3,
+  "improvement_measure": "cumulative improvement over the last five batches",
+  "first_batch": {
+    "random": 200
+  },
+  "later_batch": {
+    "random": 100,
+    "parent_perturbation": 75,
+    "sphere_relocation": 25
+  },
+  "perturbation_scales_over_R": [
+    0.05,
+    0.25,
+    0.75
+  ],
+  "required_successive_polishes": 3,
+  "slsqp_ftol": 1e-11,
+  "optimality_proven": false,
+  "random_initial_height_over_R": [
+    "1.01",
+    "1+0.5*N",
+    "1+N",
+    "1+1.5*N"
+  ],
+  "seed_rule": "50000000 + campaign_index*1000000 + batch_index*1000 + trial_index; zero-based indices",
+  "stopping_rule": "all v1 criteria must pass; see protocol.html",
+  "trajectory_scope": "one selected local refinement per N, not the entire multistart search"
+}

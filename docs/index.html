@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>球と円柱の接触配置 — 数値データ・3D表示</title>
+<style>body{margin:0;background:#f4f7fa;color:#203443;font:16px/1.7 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:28px 20px}h1{font-size:clamp(23px,4vw,34px)}a{color:#086ba0}section{background:white;padding:22px;margin:20px 0;border-radius:12px;border:1px solid #d8e3ec}img{display:block;width:100%;height:auto}table{border-collapse:collapse;white-space:nowrap;width:100%;font-variant-numeric:tabular-nums}th,td{border-bottom:1px solid #dee7ed;text-align:left;padding:10px 12px}.scroll{overflow-x:auto}small{color:#546778}footer{margin-top:24px}</style>
+<main>
+<h1>球と円柱の接触配置</h1>
+<p>3〜12個の同じ大きさの球が円柱に接触するときの、円柱高さの数値探索結果です。各配置を回転・拡大して確認し、選択した局所最適化の過程を再生できます。</p>
+<section><h2>条件とデータの読み方</h2>
+<p>円柱直径 <b>3.71 cm</b>、球直径 <b>15.3 cm</b>。円柱の底は床 z=0 に置き、球は床を貫通しません。全球が円柱の側面・上面・上端の縁のいずれかに接触し、球同士は重なりません。円柱高さは正の値として探索し、7 cm以上という下限は設けていません。</p>
+<p>各球数につき独立3回、計6,000試行を実施しました。「成立」は共通の<a href="protocol.html">数値収束基準v1</a>を満たすことを指し、大域的な最適性の証明を表しません。表示桁数は測定精度を表しません。</p>
+<p><a href="data/comparison.csv">数値一覧 CSV</a> · <a href="data/comparison.json">数値一覧 JSON</a> · <a href="data/protocol_v1.json">計算条件 JSON</a> · <a href="manifest.json">ファイルハッシュ</a></p></section>
+<section><h2>数値一覧とインタラクティブ表示</h2>
+<div class="scroll"><table><thead><tr><th>球数</th><th>円柱高さ cm</th><th>高さ / 球半径</th><th>側面 / 上面 / 縁</th><th>実行可能 / 試行</th><th>数値収束</th><th>表示・データ</th></tr></thead><tbody><tr><td>3</td><td>4.515736</td><td>0.590292</td><td>0 / 0 / 3</td><td>6,000 / 6,000</td><td>成立</td><td><a href="viewers/n3.html">3D・再生</a> · <a href="assets/images/n3_structure.png">画像</a> · <a href="data/best_3.json">座標</a></td></tr>
+<tr><td>4</td><td>11.887558</td><td>1.553929</td><td>2 / 0 / 2</td><td>6,000 / 6,000</td><td>成立</td><td><a href="viewers/n4.html">3D・再生</a> · <a href="assets/images/n4_structure.png">画像</a> · <a href="data/best_4.json">座標</a></td></tr>
+<tr><td>5</td><td>15.773000</td><td>2.061830</td><td>3 / 0 / 2</td><td>5,983 / 6,000</td><td>成立</td><td><a href="viewers/n5.html">3D・再生</a> · <a href="assets/images/n5_structure.png">画像</a> · <a href="data/best_5.json">座標</a></td></tr>
+<tr><td>6</td><td>16.749992</td><td>2.189541</td><td>3 / 0 / 3</td><td>5,998 / 6,000</td><td>成立</td><td><a href="viewers/n6.html">3D・再生</a> · <a href="assets/images/n6_structure.png">画像</a> · <a href="data/best_6.json">座標</a></td></tr>
+<tr><td>7</td><td>23.591730</td><td>3.083886</td><td>6 / 0 / 1</td><td>5,995 / 6,000</td><td>成立</td><td><a href="viewers/n7.html">3D・再生</a> · <a href="assets/images/n7_structure.png">画像</a> · <a href="data/best_7.json">座標</a></td></tr>
+<tr><td>8</td><td>27.162804</td><td>3.550693</td><td>6 / 0 / 2</td><td>5,920 / 6,000</td><td>成立</td><td><a href="viewers/n8.html">3D・再生</a> · <a href="assets/images/n8_structure.png">画像</a> · <a href="data/best_8.json">座標</a></td></tr>
+<tr><td>9</td><td>28.739361</td><td>3.756779</td><td>6 / 0 / 3</td><td>5,995 / 6,000</td><td>成立</td><td><a href="viewers/n9.html">3D・再生</a> · <a href="assets/images/n9_structure.png">画像</a> · <a href="data/best_9.json">座標</a></td></tr>
+<tr><td>10</td><td>34.482497</td><td>4.507516</td><td>8 / 0 / 2</td><td>5,970 / 6,000</td><td>成立</td><td><a href="viewers/n10.html">3D・再生</a> · <a href="assets/images/n10_structure.png">画像</a> · <a href="data/best_10.json">座標</a></td></tr>
+<tr><td>11</td><td>39.235742</td><td>5.128855</td><td>9 / 0 / 2</td><td>5,985 / 6,000</td><td>成立</td><td><a href="viewers/n11.html">3D・再生</a> · <a href="assets/images/n11_structure.png">画像</a> · <a href="data/best_11.json">座標</a></td></tr>
+<tr><td>12</td><td>40.728730</td><td>5.324017</td><td>9 / 0 / 3</td><td>5,917 / 6,000</td><td>成立</td><td><a href="viewers/n12.html">3D・再生</a> · <a href="assets/images/n12_structure.png">画像</a> · <a href="data/best_12.json">座標</a></td></tr></tbody></table></div>
+<p><small>3D表示でドラッグすると視点が回転し、ホイールで拡大できます。「試行」の選択と再生ボタンで記録した経路を再生します。再生は全6,000試行の履歴ではなく、代表として保存した局所探索です。3D表示にはWebGL対応ブラウザーと、Three.js配信元へのインターネット接続が必要です。</small></p></section>
+<section><h2>高さの一覧</h2><img src="assets/height_comparison.png" alt="球数ごとの円柱高さと高さ増分"></section>
+<section><h2>配置の一覧</h2><img src="assets/structure_atlas.png" alt="3〜12球の最良配置"><p><small>青：側面、緑：上面、橙：上端の縁への接触。各パネル内の長さ比は維持していますが、パネル間の表示縮尺は同一ではありません。</small></p></section>
+<footer><small>数値補足資料 · 2026-10-12版。構造の解釈・考察はこの公開用サイトの対象に含めていません。可視化：Three.js r128 / OrbitControls（MIT）。参考：<a href="https://github.com/yoheinakajima/soft-to-rigid-packing">Yohei Nakajima, Soft-to-Rigid Packing</a>。</small></footer>
+</main></html>

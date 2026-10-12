@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "n_spheres": 4,
+  "cylinder_radius_cm": 1.855,
+  "sphere_radius_cm": 7.65,
+  "height_cm": 11.887558021077103,
+  "floor_enabled": true,
+  "contact_region": "side_or_top_including_upper_rim",
+  "centers_cm": [
+    [
+      -7.366016755233547,
+      2.065017466257208,
+      16.881601975574963
+    ],
+    [
+      -2.5657504608994537,
+      -9.152155460458205,
+      7.65
+    ],
+    [
+      7.36601675847048,
+      -2.0650174671372277,
+      16.881601971682656
+    ],
+    [
+      2.56575045960923,
+      9.152155460819912,
+      7.65
+    ]
+  ],
+  "source": "campaign2_batch8_random_surface_seed51007038_polish1_polish2_polish3",
+  "optimality_proven": false,
+  "verification": {
+    "valid_within_tolerance": true,
+    "tolerance_cm": 7.65e-07,
+    "min_pair_gap_cm": -2.4847679469530703e-11,
+    "max_cylinder_contact_error_cm": 6.652456363553938e-13,
+    "min_center_z_cm": 7.65,
+    "min_floor_gap_cm": 0.0,
+    "contact_kinds": [
+      "upper_rim",
+      "side",
+      "upper_rim",
+      "side"
+    ]
+  }
+}

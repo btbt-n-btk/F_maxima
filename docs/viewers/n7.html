@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>球・円柱接触の探索ビューア</title>
+<style>
+:root{color-scheme:light dark;--bg:#f4f6f8;--panel:#fff;--ink:#182635;--muted:#586878;--border:#d5dee7;--blue:#126891;--amber:#a76715;--bad:#a52f3c;--good:#17664e}
+@media(prefers-color-scheme:dark){:root{--bg:#111a23;--panel:#1a2733;--ink:#e2edf4;--muted:#a6b8c7;--border:#3a4d5d;--blue:#65c5ee;--amber:#e3ad58;--bad:#ff9aa7;--good:#7edbb4}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:24px}h1{font-size:23px;margin:0 0 5px;font-weight:600}p{margin:6px 0 16px;color:var(--muted)}label{display:block}button,select,input{font:inherit}button,select{padding:7px 11px;border:1px solid var(--border);border-radius:5px;background:var(--panel);color:var(--ink)}button:disabled{opacity:.45}button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}.toolbar{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin:18px 0}.toolbar label{max-width:100%}input[type=file]{max-width:100%;display:block}#trial{max-width:100%}.layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:20px}#stage{position:relative;background:var(--panel);min-width:0;height:490px;border:1px solid var(--border);border-radius:8px;overflow:hidden}#stage canvas{display:block;width:100%;height:100%}#legend{position:absolute;bottom:12px;left:14px;background:var(--panel);padding:2px 8px;color:var(--muted);font-size:13px;pointer-events:none}.stats{margin:0;padding:0}.stats div{border-bottom:1px solid var(--border);padding:12px 0}.stats dt{color:var(--muted);font-size:13px}.stats dd{margin:0;font-size:22px;font-variant-numeric:tabular-nums}#state{margin:0 0 10px;font-weight:600}.valid{color:var(--good)}.invalid{color:var(--bad)}#details{font-size:13px;overflow-wrap:anywhere}#error{color:var(--bad)}.playback{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:16px 0 8px}#scrub{width:100%;accent-color:var(--blue)}#frame-label{font-variant-numeric:tabular-nums}#chart{display:block;width:100%;height:190px;margin-top:12px}#chart text{fill:var(--muted);font-size:12px}.note{font-size:13px}#empty{position:absolute;inset:0;display:grid;place-items:center;padding:30px;text-align:center;color:var(--muted)}#empty[hidden]{display:none}@media(max-width:750px){main{padding:16px}.layout{grid-template-columns:1fr}#stage{height:380px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.stats dd{font-size:19px}.toolbar{align-items:start}h1{font-size:20px}}
+</style>
+</head>
+<body><main>
+<h1 id="heading">球・円柱接触の探索</h1>
+<p>記録された配置を回転して確認し、探索の各反復を再生します。</p>
+<div class="toolbar">
+  <label>結果・履歴JSON<input id="file" type="file" accept=".json,application/json"></label>
+  <label>表示する配置<select id="trial" disabled><option>JSONを読み込んでください</option></select></label>
+  <button id="fit" type="button" disabled>視点を合わせる</button>
+</div>
+<div id="error" role="alert"></div>
+<div class="layout">
+  <div id="stage"><div id="empty">結果または探索履歴のJSONを選択</div><div id="legend">青：球　橙：円柱　ドラッグで回転・ホイールで拡大</div></div>
+  <div>
+    <div id="state" aria-live="polite">未読み込み</div>
+    <dl class="stats">
+      <div><dt>円柱高さ</dt><dd id="height">—</dd></div>
+      <div><dt>現在の球半径</dt><dd id="radius">—</dd></div>
+      <div><dt>最大球間重なり</dt><dd id="overlap">—</dd></div>
+      <div><dt>最大円柱接触誤差</dt><dd id="contact">—</dd></div>
+    </dl>
+    <p id="details">—</p>
+  </div>
+</div>
+<div class="playback">
+  <button id="prev" type="button" disabled>前へ</button><button id="play" type="button" disabled>再生</button><button id="next" type="button" disabled>次へ</button>
+  <span id="frame-label">—</span>
+</div>
+<label for="scrub" class="note">記録ステップ</label><input id="scrub" type="range" min="0" max="0" value="0" disabled>
+<svg id="chart" role="img" aria-label="記録ステップに対する円柱高さ。点は現在の配置、破線は基準配置の高さ。"></svg>
+<p class="note">探索途中は重なり・接触誤差を許します。縮小球での成立と、目標径での成立を区別して表示します。再生は物理時間ではなく、保存された反復の順序です。配置間の補間は行いません。</p>
+<p class="note">Three.jsの読み込みにインターネット接続が必要です。最小高さの証明ではなく、数値候補を確認するための表示です。</p>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+window.PACKING_DATA = {"schema_version":1,"kind":"packing_trajectory","n_spheres":7,"cylinder_radius_cm":1.855,"target_sphere_radius_cm":7.65,"floor_enabled":true,"tolerance_cm":7.65e-07,"baseline":{"schema_version":1,"n_spheres":7,"cylinder_radius_cm":1.855,"sphere_radius_cm":7.65,"height_cm":23.591730339984746,"floor_enabled":true,"contact_region":"side_or_top_including_upper_rim","centers_cm":[[-3.66426087764878,-8.770303143023769,7.650000000000004],[0.5735798276646624,9.487677860324737,20.324309846277615],[-7.295643160790934,6.092504892932339,7.65],[-9.2333980641675,-2.2559665752461484,20.324309846277615],[7.976473752724949,5.169225422835606,7.65],[1.4333074369123313,-1.1969380053283698,31.241720356161874],[7.295643160790935,-6.092504892932338,17.984403708003672]],"source":"campaign2_batch2_perturb_0.25_seed51001161","optimality_proven":false,"verification":{"valid_within_tolerance":true,"tolerance_cm":7.65e-07,"min_pair_gap_cm":-7.105427357601002e-15,"max_cylinder_contact_error_cm":1.2043699371133698e-11,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]}},"best":{"schema_version":1,"n_spheres":7,"cylinder_radius_cm":1.855,"sphere_radius_cm":7.65,"height_cm":23.591730339984746,"floor_enabled":true,"contact_region":"side_or_top_including_upper_rim","centers_cm":[[-3.66426087764878,-8.770303143023769,7.650000000000004],[0.5735798276646624,9.487677860324737,20.324309846277615],[-7.295643160790934,6.092504892932339,7.65],[-9.2333980641675,-2.2559665752461484,20.324309846277615],[7.976473752724949,5.169225422835606,7.65],[1.4333074369123313,-1.1969380053283698,31.241720356161874],[7.295643160790935,-6.092504892932338,17.984403708003672]],"source":"campaign2_batch2_perturb_0.25_seed51001161_polish1_polish2_polish3","optimality_proven":false,"verification":{"valid_within_tolerance":true,"tolerance_cm":7.65e-07,"min_pair_gap_cm":-7.105427357601002e-15,"max_cylinder_contact_error_cm":1.2043699371133698e-11,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]}},"trials":[{"label":"campaign2_batch2_perturb_0.25_seed51001161","frames":[{"phase":"refine_start","stage":null,"iteration":0,"height_cm":23.591730339992676,"radius_fraction":1.0,"sphere_radius_cm":7.65,"centers_cm":[[-5.695750217766977,-7.609431940480672,7.76785911165507],[1.7532557133452613,9.341901273489364,21.571893300056207],[-8.067861970794999,5.0253983145816274,8.435238786761438],[-9.010295706902212,-3.0264824919664663,21.128874261169784],[7.154026480346434,6.258189044643988,7.65],[6.5065950039173375,-4.062828578833859,28.561446048446598],[7.144750999283531,-6.268776448258224,16.931710522720277]],"verification":{"valid_within_tolerance":false,"tolerance_cm":7.65e-07,"min_pair_gap_cm":-3.445709743920533,"max_cylinder_contact_error_cm":1.7763568394002505e-15,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]},"target_feasible":false},{"phase":"refine","stage":null,"iteration":1,"height_cm":22.323418165536282,"radius_fraction":1.0,"sphere_radius_cm":7.65,"centers_cm":[[-3.871563121916558,-8.974857655528385,7.65],[0.773447339680204,9.525788319479323,20.960684723835886],[-7.362902545143806,6.157152453285804,8.291907868183893],[-9.163422396693807,-2.570601197657416,20.778320549254737],[8.049037057397417,5.235060896431086,7.65],[2.127354267739224,-1.7900608626011736,33.04886188379958],[7.285990440198885,-6.1078007546843045,18.04504905979683]],"verification":{"valid_within_tolerance":false,"tolerance_cm":7.65e-07,"min_pair_gap_cm":0.04034084267312288,"max_cylinder_contact_error_cm":3.1152814685987593,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]},"target_feasible":false},{"phase":"refine","stage":null,"iteration":2,"height_cm":23.23184530240764,"radius_fraction":1.0,"sphere_radius_cm":7.65,"centers_cm":[[-3.6500726149625455,-8.782095342291312,7.65],[0.5670925684465595,9.490411975500333,20.33154014837686],[-7.294900640328161,6.094268069557745,7.650000000000002],[-9.237222630791896,-2.26254773773168,20.325747122339745],[7.98994158614945,5.1496490714776595,7.65],[1.3947347464659439,-1.1618404249005803,31.36611823320761],[7.293699227088614,-6.0948507056719246,18.00289265705868]],"verification":{"valid_within_tolerance":false,"tolerance_cm":7.65e-07,"min_pair_gap_cm":0.0005200901618760412,"max_cylinder_contact_error_cm":0.4842729307999729,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","top","side"]},"target_feasible":false},{"phase":"refine","stage":null,"iteration":3,"height_cm":23.577956750232598,"radius_fraction":1.0,"sphere_radius_cm":7.65,"centers_cm":[[-3.6642778933293334,-8.77031585544736,7.65],[0.5735624873912419,9.487681577461066,20.324327203463515],[-7.295639587050368,6.092509477276219,7.650000000000002],[-9.233397486663456,-2.2559832291669397,20.32433357930736],[7.976498274033918,5.169242208665827,7.650000000000002],[1.4335100329700994,-1.197001688777229,31.242372314690584],[7.295639755397343,-6.09250972960404,17.98442066458447]],"verification":{"valid_within_tolerance":false,"tolerance_cm":7.65e-07,"min_pair_gap_cm":3.4293697108722654e-06,"max_cylinder_contact_error_cm":0.0144258486026283,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]},"target_feasible":false},{"phase":"refine","stage":null,"iteration":4,"height_cm":23.59171678055093,"radius_fraction":1.0,"sphere_radius_cm":7.65,"centers_cm":[[-3.664260873752259,-8.770303144682098,7.65],[0.5735798234276623,9.487677860597543,20.324309846365505],[-7.295643163506975,6.092504889682714,7.65],[-9.23339806317407,-2.2559665793742756,20.32430984630646],[7.976473750443812,5.169225426461674,7.65],[1.4333074392082217,-1.1969380069759106,31.24172037472199],[7.295643163511701,-6.09250488967716,17.984403708003306]],"verification":{"valid_within_tolerance":false,"tolerance_cm":7.65e-07,"min_pair_gap_cm":1.7477574942859064e-11,"max_cylinder_contact_error_cm":1.3577992810098749e-05,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]},"target_feasible":false},{"phase":"refine","stage":null,"iteration":5,"height_cm":23.591730339984746,"radius_fraction":1.0,"sphere_radius_cm":7.65,"centers_cm":[[-3.66426087764878,-8.770303143023769,7.650000000000004],[0.5735798276646624,9.487677860324737,20.324309846277615],[-7.295643160790934,6.092504892932339,7.65],[-9.2333980641675,-2.2559665752461484,20.324309846277615],[7.976473752724949,5.169225422835606,7.65],[1.4333074369123313,-1.1969380053283698,31.241720356161874],[7.295643160790935,-6.092504892932338,17.984403708003672]],"verification":{"valid_within_tolerance":true,"tolerance_cm":7.65e-07,"min_pair_gap_cm":-7.105427357601002e-15,"max_cylinder_contact_error_cm":1.2043699371133698e-11,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]},"target_feasible":true},{"phase":"refine","stage":null,"iteration":6,"height_cm":23.591730339984746,"radius_fraction":1.0,"sphere_radius_cm":7.65,"centers_cm":[[-3.66426087764878,-8.770303143023769,7.650000000000004],[0.5735798276646624,9.487677860324737,20.324309846277615],[-7.295643160790934,6.092504892932339,7.65],[-9.2333980641675,-2.2559665752461484,20.324309846277615],[7.976473752724949,5.169225422835606,7.65],[1.4333074369123313,-1.1969380053283698,31.241720356161874],[7.295643160790935,-6.092504892932338,17.984403708003672]],"verification":{"valid_within_tolerance":true,"tolerance_cm":7.65e-07,"min_pair_gap_cm":-7.105427357601002e-15,"max_cylinder_contact_error_cm":1.2043699371133698e-11,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]},"target_feasible":true},{"phase":"refine_end","stage":null,"iteration":6,"height_cm":23.591730339984746,"radius_fraction":1.0,"sphere_radius_cm":7.65,"centers_cm":[[-3.66426087764878,-8.770303143023769,7.650000000000004],[0.5735798276646624,9.487677860324737,20.324309846277615],[-7.295643160790934,6.092504892932339,7.65],[-9.2333980641675,-2.2559665752461484,20.324309846277615],[7.976473752724949,5.169225422835606,7.65],[1.4333074369123313,-1.1969380053283698,31.241720356161874],[7.295643160790935,-6.092504892932338,17.984403708003672]],"verification":{"valid_within_tolerance":true,"tolerance_cm":7.65e-07,"min_pair_gap_cm":-7.105427357601002e-15,"max_cylinder_contact_error_cm":1.2043699371133698e-11,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]},"target_feasible":true}],"result":{"schema_version":1,"n_spheres":7,"cylinder_radius_cm":1.855,"sphere_radius_cm":7.65,"height_cm":23.591730339984746,"floor_enabled":true,"contact_region":"side_or_top_including_upper_rim","centers_cm":[[-3.66426087764878,-8.770303143023769,7.650000000000004],[0.5735798276646624,9.487677860324737,20.324309846277615],[-7.295643160790934,6.092504892932339,7.65],[-9.2333980641675,-2.2559665752461484,20.324309846277615],[7.976473752724949,5.169225422835606,7.65],[1.4333074369123313,-1.1969380053283698,31.241720356161874],[7.295643160790935,-6.092504892932338,17.984403708003672]],"source":"replay","optimality_proven":false,"verification":{"valid_within_tolerance":true,"tolerance_cm":7.65e-07,"min_pair_gap_cm":-7.105427357601002e-15,"max_cylinder_contact_error_cm":1.2043699371133698e-11,"min_center_z_cm":7.65,"min_floor_gap_cm":0.0,"contact_kinds":["side","side","side","side","side","upper_rim","side"]}}}]};
+</script>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const ui = Object.fromEntries(['stage','file','trial','fit','error','empty','state','height','radius','overlap','contact','details','prev','play','next','frame-label','scrub','chart'].map(id=>[id,$(id)]));
+let data=null,entries=[],frames=[],index=0,playing=false,lastTick=0,meshes=[];
+const phaseNames={baseline:'基準配置',result:'結果',growth_start:'球径変更・開始',growth:'球径変更・探索',growth_end:'球径変更・終了',penalty_start:'球径固定・開始',penalty:'球径固定・探索',penalty_end:'球径固定・終了',refine_start:'制約付き調整・開始',refine:'制約付き調整',refine_end:'制約付き調整・終了'};
+const colors=()=>{const s=getComputedStyle(document.documentElement);return {bg:s.getPropertyValue('--panel').trim(),ink:s.getPropertyValue('--ink').trim(),grid:s.getPropertyValue('--border').trim(),blue:s.getPropertyValue('--blue').trim(),amber:s.getPropertyValue('--amber').trim()};};
+if(!window.THREE||!THREE.OrbitControls){ui.error.textContent='3Dライブラリを読み込めません。ネットワーク接続を確認して再読み込みしてください。';return;}
+let renderer;
+try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){ui.error.textContent='WebGLを開始できません：'+e.message;return;}
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));ui.stage.appendChild(renderer.domElement);
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(40,1,0.1,5000);
+camera.position.set(65,50,65);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,18,0);
+scene.add(new THREE.AmbientLight(0xffffff,.75));const light=new THREE.DirectionalLight(0xffffff,.6);light.position.set(30,60,40);scene.add(light);
+const sphereGeometry=new THREE.SphereGeometry(1,24,16);
+const sphereMaterial=new THREE.MeshPhongMaterial({color:colors().blue,transparent:true,opacity:.5,depthWrite:false,shininess:35});
+const cylinderGeometry=new THREE.CylinderGeometry(1,1,1,40);
+const cylinderMaterial=new THREE.MeshPhongMaterial({color:colors().amber,transparent:true,opacity:.75,depthWrite:false});
+const cylinder=new THREE.Mesh(cylinderGeometry,cylinderMaterial);cylinder.visible=false;scene.add(cylinder);
+const cylinderEdges=new THREE.LineSegments(new THREE.EdgesGeometry(cylinderGeometry),new THREE.LineBasicMaterial({color:colors().amber}));cylinderEdges.visible=false;scene.add(cylinderEdges);
+const floor=new THREE.GridHelper(70,14,colors().grid,colors().grid);floor.visible=false;scene.add(floor);
+function theme(){const c=colors();renderer.setClearColor(c.bg);sphereMaterial.color.set(c.blue);cylinderMaterial.color.set(c.amber);cylinderEdges.material.color.set(c.amber);floor.material.color.set(c.grid);drawChart();}
+theme();matchMedia('(prefers-color-scheme:dark)').addEventListener('change',theme);
+function resize(){const w=ui.stage.clientWidth,h=ui.stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();drawChart();}
+new ResizeObserver(resize).observe(ui.stage);
+function validateFrame(f,n){return f&&Number.isFinite(f.height_cm)&&f.height_cm>0&&Number.isFinite(f.sphere_radius_cm)&&f.sphere_radius_cm>0&&Array.isArray(f.centers_cm)&&f.centers_cm.length===n&&f.centers_cm.every(p=>Array.isArray(p)&&p.length===3&&p.every(Number.isFinite));}
+function asFrame(doc){return {phase:'result',iteration:0,height_cm:doc.height_cm,sphere_radius_cm:doc.sphere_radius_cm,radius_fraction:1,centers_cm:doc.centers_cm};}
+function load(raw){
+  const trajectory=raw.kind==='packing_trajectory';
+  const r=raw.cylinder_radius_cm,R=trajectory?raw.target_sphere_radius_cm:raw.sphere_radius_cm,n=raw.n_spheres;
+  if(!Number.isFinite(r)||r<=0||!Number.isFinite(R)||R<=0||!Number.isInteger(n)||n<2||n>100||typeof raw.floor_enabled!=='boolean')throw Error('寸法・球数・床条件が不正です。');
+  const list=[];
+  if(trajectory){
+    if(!Array.isArray(raw.trials))throw Error('試行履歴がありません。');
+    list.push({name:'最良結果',frames:[asFrame(raw.best)]},{name:'基準配置',frames:[asFrame(raw.baseline)]});
+    raw.trials.forEach(t=>{if(!t||!Array.isArray(t.frames)||t.frames.length===0)throw Error('空の試行履歴です。');list.push({name:'試行：'+t.label,frames:t.frames});});
+  }else list.push({name:'読み込んだ結果',frames:[asFrame(raw)]});
+  if(list.some(e=>e.frames.some(f=>!validateFrame(f,n))))throw Error('球中心・高さ・半径を確認してください。');
+  data={r,R,n,floor:raw.floor_enabled,tolerance:raw.tolerance_cm||raw.verification?.tolerance_cm||1e-6,baselineHeight:trajectory?raw.baseline.height_cm:raw.height_cm};
+  if(!Number.isFinite(data.tolerance)||data.tolerance<=0)throw Error('許容誤差が不正です。');
+  document.getElementById('heading').textContent=n+'球・円柱接触の探索';document.title=n+'球・円柱接触の探索ビューア';
+  entries=list;ui.trial.replaceChildren();entries.forEach((e,i)=>{const o=document.createElement('option');o.value=i;o.textContent=e.name;ui.trial.appendChild(o);});
+  ui.trial.disabled=false;ui.fit.disabled=false;ui.empty.hidden=true;
+  meshes.forEach(m=>scene.remove(m));meshes=Array.from({length:n},()=>{const m=new THREE.Mesh(sphereGeometry,sphereMaterial);scene.add(m);return m;});
+  selectEntry(0);ui.error.textContent='';
+}
+function selectEntry(i){stop();frames=entries[i].frames;index=0;ui.scrub.max=frames.length-1;ui.scrub.disabled=frames.length<2;ui.play.disabled=frames.length<2;update();fitCamera();}
+function measure(f){
+  const R=f.sphere_radius_cm,p=f.centers_cm,h=f.height_cm;
+  let gap=Infinity,err=0;for(let i=0;i<p.length;i++){const [x,y,z]=p[i];const d=Math.hypot(Math.max(Math.hypot(x,y)-data.r,0),Math.max(-z,z-h,0));err=Math.max(err,Math.abs(d-R));for(let j=0;j<i;j++)gap=Math.min(gap,Math.hypot(...p[i].map((v,k)=>v-p[j][k]))-2*R);}
+  const zmin=Math.min(...p.map(p=>p[2])),floorGap=zmin-R;
+  return {gap,err,floorGap,valid:gap>=-data.tolerance&&err<=data.tolerance&&zmin>=-data.tolerance&&(!data.floor||floorGap>=-data.tolerance)};
+}
+function fmt(x){return Math.abs(x)<.001&&x!==0?x.toExponential(2):x.toFixed(6);}
+function update(){
+  if(!frames.length)return;
+  const f=frames[index],q=f.sphere_radius_cm/data.R,m=measure(f),target=Math.abs(q-1)<1e-12;
+  meshes.forEach((mesh,i)=>{const [x,y,z]=f.centers_cm[i];mesh.position.set(x,z,y);mesh.scale.setScalar(f.sphere_radius_cm);});
+  [cylinder,cylinderEdges].forEach(mesh=>{mesh.visible=true;mesh.position.set(0,f.height_cm/2,0);mesh.scale.set(data.r,f.height_cm,data.r);});floor.visible=data.floor;
+  ui.height.textContent=f.height_cm.toFixed(6)+' cm';ui.radius.textContent=f.sphere_radius_cm.toFixed(4)+' cm';
+  ui.overlap.textContent=fmt(Math.max(0,-m.gap))+' cm';ui.contact.textContent=fmt(m.err)+' cm';
+  ui.state.textContent=m.valid?(target?'目標径で条件成立（数値検証）':'縮小球で条件成立・目標径は未確認'):'探索途中・制約違反あり';ui.state.className=m.valid&&target?'valid':'invalid';
+  ui.details.textContent=`目標半径比 ${(q*100).toFixed(1)}% ／ ${data.floor?'床あり・最小隙間 '+fmt(m.floorGap)+' cm':'床なし'} ／ 許容誤差 ${data.tolerance.toExponential(0)} cm`;
+  ui['frame-label'].textContent=`${index+1} / ${frames.length}　${phaseNames[f.phase]||f.phase}${f.stage?'・段階 '+f.stage:''}・反復 ${f.iteration||0}`;
+  ui.scrub.value=index;ui.prev.disabled=index===0;ui.next.disabled=index===frames.length-1;drawChart();
+}
+function fitCamera(){
+  if(!frames.length)return;const f=frames[index],R=f.sphere_radius_cm;
+  const box=new THREE.Box3(new THREE.Vector3(-data.r,0,-data.r),new THREE.Vector3(data.r,f.height_cm,data.r));
+  f.centers_cm.forEach(([x,y,z])=>{box.expandByPoint(new THREE.Vector3(x-R,z-R,y-R));box.expandByPoint(new THREE.Vector3(x+R,z+R,y+R));});
+  const center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()),span=Math.max(size.y,size.x/Math.max(camera.aspect,.1),size.z/Math.max(camera.aspect,.1));
+  const distance=span/(2*Math.tan(camera.fov*Math.PI/360))*1.6;controls.target.copy(center);camera.position.copy(center).add(new THREE.Vector3(1,.6,1).normalize().multiplyScalar(distance));camera.far=Math.max(5000,distance*10);camera.updateProjectionMatrix();controls.update();
+}
+function drawChart(){
+  const svg=ui.chart;svg.replaceChildren();if(!frames.length)return;
+  const ns='http://www.w3.org/2000/svg',w=svg.clientWidth||600,H=190,left=62,right=w-18,top=15,bottom=151;
+  svg.setAttribute('viewBox',`0 0 ${w} ${H}`);const add=(type,attrs,text)=>{const e=document.createElementNS(ns,type);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text!==undefined)e.textContent=text;svg.appendChild(e);return e;};
+  const values=frames.map(f=>f.height_cm).concat(data.baselineHeight),lo=Math.min(...values),hi=Math.max(...values),padding=Math.max((hi-lo)*.08,.05),min=lo-padding,max=hi+padding;
+  const X=i=>left+(right-left)*i/Math.max(frames.length-1,1),Y=h=>bottom-(bottom-top)*(h-min)/(max-min);
+  [0,.5,1].forEach(t=>{const v=min+t*(max-min),y=Y(v);add('line',{x1:left,y1:y,x2:right,y2:y,stroke:'var(--border)'});add('text',{x:left-8,y:y+4,'text-anchor':'end'},v.toFixed(2));});
+  add('text',{x:4,y:12},'高さ cm');
+  add('line',{x1:left,y1:Y(data.baselineHeight),x2:right,y2:Y(data.baselineHeight),stroke:'var(--amber)','stroke-dasharray':'5 4'});
+  add('polyline',{points:frames.map((f,i)=>`${X(i)},${Y(f.height_cm)}`).join(' '),fill:'none',stroke:'var(--blue)','stroke-width':2});
+  add('circle',{cx:X(index),cy:Y(frames[index].height_cm),r:4,fill:'var(--blue)'});
+  const ticks=frames.length===1?[0]:[0,Math.floor((frames.length-1)/2),frames.length-1];[...new Set(ticks)].forEach(i=>add('text',{x:X(i),y:bottom+19,'text-anchor':'middle'},String(i+1)));
+  add('text',{x:(left+right)/2,y:187,'text-anchor':'middle'},'記録ステップ（破線：基準配置）');
+}
+function stop(){playing=false;ui.play.textContent='再生';}
+ui.file.addEventListener('change',async()=>{stop();try{const f=ui.file.files[0];if(f)load(JSON.parse(await f.text()));}catch(e){ui.error.textContent='読み込み失敗：'+e.message;}});
+ui.trial.addEventListener('change',()=>selectEntry(Number(ui.trial.value)));ui.fit.addEventListener('click',fitCamera);
+ui.prev.addEventListener('click',()=>{stop();index=Math.max(0,index-1);update();});ui.next.addEventListener('click',()=>{stop();index=Math.min(frames.length-1,index+1);update();});
+ui.scrub.addEventListener('input',()=>{stop();index=Number(ui.scrub.value);update();});
+ui.play.addEventListener('click',()=>{if(playing){stop();return;}if(index>=frames.length-1)index=0;playing=true;lastTick=performance.now();ui.play.textContent='停止';update();});
+function tick(now){requestAnimationFrame(tick);if(playing&&now-lastTick>=100){index=Math.min(index+1,frames.length-1);lastTick=now;update();if(index===frames.length-1)stop();}controls.update();renderer.render(scene,camera);}
+resize();requestAnimationFrame(tick);
+if(window.PACKING_DATA){try{load(window.PACKING_DATA);}catch(e){ui.error.textContent='サンプルの読み込み失敗：'+e.message;}}
+})();
+</script>
+</body></html>

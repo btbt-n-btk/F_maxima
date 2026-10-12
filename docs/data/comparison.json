@@ -1,0 +1,507 @@
+[
+  {
+    "n": 3,
+    "height_cm": 4.515736397450871,
+    "height_over_R": 0.5902923395360615,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 6000,
+    "campaign_heights_cm": [
+      4.515736397450871,
+      4.515736397459371,
+      4.515736397451415
+    ],
+    "random_rediscoveries": [
+      1100,
+      1100,
+      1100
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": -1.7763568394002505e-15,
+      "max_cylinder_contact_error_cm": 1.6572521133184637e-11,
+      "min_center_z_cm": 7.65,
+      "min_floor_gap_cm": 0.0,
+      "contact_kinds": [
+        "upper_rim",
+        "upper_rim",
+        "upper_rim"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 0,
+      "top": 0,
+      "upper_rim": 3
+    }
+  },
+  {
+    "n": 4,
+    "height_cm": 11.887558021077103,
+    "height_over_R": 1.553929153081974,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 6000,
+    "campaign_heights_cm": [
+      11.887558021092328,
+      11.887558021077103,
+      11.887558021089466
+    ],
+    "random_rediscoveries": [
+      516,
+      531,
+      531
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": -2.4847679469530703e-11,
+      "max_cylinder_contact_error_cm": 6.652456363553938e-13,
+      "min_center_z_cm": 7.65,
+      "min_floor_gap_cm": 0.0,
+      "contact_kinds": [
+        "upper_rim",
+        "side",
+        "upper_rim",
+        "side"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 2,
+      "top": 0,
+      "upper_rim": 2
+    }
+  },
+  {
+    "n": 5,
+    "height_cm": 15.773000371308129,
+    "height_over_R": 2.0618301138964874,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 5983,
+    "campaign_heights_cm": [
+      15.77300037131083,
+      15.773000371319272,
+      15.773000371308129
+    ],
+    "random_rediscoveries": [
+      739,
+      756,
+      755
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": -3.5633718198369024e-12,
+      "max_cylinder_contact_error_cm": 1.475708444331758e-11,
+      "min_center_z_cm": 7.65,
+      "min_floor_gap_cm": 0.0,
+      "contact_kinds": [
+        "side",
+        "side",
+        "side",
+        "upper_rim",
+        "upper_rim"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 3,
+      "top": 0,
+      "upper_rim": 2
+    }
+  },
+  {
+    "n": 6,
+    "height_cm": 16.749991745555505,
+    "height_over_R": 2.189541404647778,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 5998,
+    "campaign_heights_cm": [
+      16.749991745555505,
+      16.74999174555924,
+      16.749991745558013
+    ],
+    "random_rediscoveries": [
+      1100,
+      1099,
+      1097
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": 3.1796787425264483e-13,
+      "max_cylinder_contact_error_cm": 1.582467490379713e-11,
+      "min_center_z_cm": 7.650000000000004,
+      "min_floor_gap_cm": 3.552713678800501e-15,
+      "contact_kinds": [
+        "side",
+        "side",
+        "upper_rim",
+        "upper_rim",
+        "side",
+        "upper_rim"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 3,
+      "top": 0,
+      "upper_rim": 3
+    }
+  },
+  {
+    "n": 7,
+    "height_cm": 23.591730339984746,
+    "height_over_R": 3.083886318952254,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 5995,
+    "campaign_heights_cm": [
+      23.591730339990583,
+      23.591730339984746,
+      23.591730339988693
+    ],
+    "random_rediscoveries": [
+      779,
+      782,
+      751
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": -7.105427357601002e-15,
+      "max_cylinder_contact_error_cm": 1.2043699371133698e-11,
+      "min_center_z_cm": 7.65,
+      "min_floor_gap_cm": 0.0,
+      "contact_kinds": [
+        "side",
+        "side",
+        "side",
+        "side",
+        "side",
+        "upper_rim",
+        "side"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 6,
+      "top": 0,
+      "upper_rim": 1
+    }
+  },
+  {
+    "n": 8,
+    "height_cm": 27.16280384909169,
+    "height_over_R": 3.550693313606757,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 5920,
+    "campaign_heights_cm": [
+      27.16280384909169,
+      27.16280384909408,
+      27.1628038490996
+    ],
+    "random_rediscoveries": [
+      376,
+      395,
+      385
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": -2.2808421817899216e-12,
+      "max_cylinder_contact_error_cm": 1.426059270670521e-11,
+      "min_center_z_cm": 7.65,
+      "min_floor_gap_cm": 0.0,
+      "contact_kinds": [
+        "side",
+        "side",
+        "side",
+        "side",
+        "upper_rim",
+        "side",
+        "side",
+        "upper_rim"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 6,
+      "top": 0,
+      "upper_rim": 2
+    }
+  },
+  {
+    "n": 9,
+    "height_cm": 28.73936099503467,
+    "height_over_R": 3.7567792150372115,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 5995,
+    "campaign_heights_cm": [
+      28.739360995035558,
+      28.73936099503467,
+      28.739360995036986
+    ],
+    "random_rediscoveries": [
+      1089,
+      1084,
+      1087
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": 3.197442310920451e-14,
+      "max_cylinder_contact_error_cm": 1.27702293184484e-11,
+      "min_center_z_cm": 7.65,
+      "min_floor_gap_cm": 0.0,
+      "contact_kinds": [
+        "side",
+        "upper_rim",
+        "side",
+        "side",
+        "side",
+        "side",
+        "side",
+        "upper_rim",
+        "upper_rim"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 6,
+      "top": 0,
+      "upper_rim": 3
+    }
+  },
+  {
+    "n": 10,
+    "height_cm": 34.482497097111526,
+    "height_over_R": 4.507515960406735,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 5970,
+    "campaign_heights_cm": [
+      34.4824970971119,
+      34.482497097111526,
+      34.482497097115136
+    ],
+    "random_rediscoveries": [
+      326,
+      323,
+      309
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": 1.0658141036401503e-14,
+      "max_cylinder_contact_error_cm": 2.5559998562130204e-11,
+      "min_center_z_cm": 7.65,
+      "min_floor_gap_cm": 0.0,
+      "contact_kinds": [
+        "side",
+        "upper_rim",
+        "side",
+        "side",
+        "side",
+        "side",
+        "side",
+        "side",
+        "upper_rim",
+        "side"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 8,
+      "top": 0,
+      "upper_rim": 2
+    }
+  },
+  {
+    "n": 11,
+    "height_cm": 39.23574167821423,
+    "height_over_R": 5.128855121335193,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 5985,
+    "campaign_heights_cm": [
+      39.23574167821598,
+      39.23574167821423,
+      39.23574167821501
+    ],
+    "random_rediscoveries": [
+      86,
+      86,
+      106
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": 7.105427357601002e-15,
+      "max_cylinder_contact_error_cm": 1.9194423828139406e-11,
+      "min_center_z_cm": 7.65,
+      "min_floor_gap_cm": 0.0,
+      "contact_kinds": [
+        "side",
+        "upper_rim",
+        "side",
+        "upper_rim",
+        "side",
+        "side",
+        "side",
+        "side",
+        "side",
+        "side",
+        "side"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 9,
+      "top": 0,
+      "upper_rim": 2
+    }
+  },
+  {
+    "n": 12,
+    "height_cm": 40.72873024449074,
+    "height_over_R": 5.324017025423626,
+    "numerically_converged": true,
+    "attempts": 6000,
+    "feasible": 5917,
+    "campaign_heights_cm": [
+      40.72873024449677,
+      40.72873024449074,
+      40.72873024450048
+    ],
+    "random_rediscoveries": [
+      922,
+      866,
+      865
+    ],
+    "criteria": {
+      "three_independent_campaigns": true,
+      "minimum_budget": true,
+      "no_significant_late_improvement": true,
+      "agreement_between_campaigns": true,
+      "independent_random_rediscovery": true,
+      "stable_final_polishing": true,
+      "final_feasibility": true
+    },
+    "verification": {
+      "valid_within_tolerance": true,
+      "tolerance_cm": 7.65e-07,
+      "min_pair_gap_cm": 7.460698725481052e-14,
+      "max_cylinder_contact_error_cm": 1.538502658604557e-11,
+      "min_center_z_cm": 7.65,
+      "min_floor_gap_cm": 0.0,
+      "contact_kinds": [
+        "side",
+        "upper_rim",
+        "upper_rim",
+        "side",
+        "side",
+        "side",
+        "side",
+        "side",
+        "side",
+        "side",
+        "upper_rim",
+        "side"
+      ]
+    },
+    "optimality_proven": false,
+    "contact_counts": {
+      "side": 9,
+      "top": 0,
+      "upper_rim": 3
+    }
+  }
+]

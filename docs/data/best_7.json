@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "n_spheres": 7,
+  "cylinder_radius_cm": 1.855,
+  "sphere_radius_cm": 7.65,
+  "height_cm": 23.591730339984746,
+  "floor_enabled": true,
+  "contact_region": "side_or_top_including_upper_rim",
+  "centers_cm": [
+    [
+      -3.66426087764878,
+      -8.770303143023769,
+      7.650000000000004
+    ],
+    [
+      0.5735798276646624,
+      9.487677860324737,
+      20.324309846277615
+    ],
+    [
+      -7.295643160790934,
+      6.092504892932339,
+      7.65
+    ],
+    [
+      -9.2333980641675,
+      -2.2559665752461484,
+      20.324309846277615
+    ],
+    [
+      7.976473752724949,
+      5.169225422835606,
+      7.65
+    ],
+    [
+      1.4333074369123313,
+      -1.1969380053283698,
+      31.241720356161874
+    ],
+    [
+      7.295643160790935,
+      -6.092504892932338,
+      17.984403708003672
+    ]
+  ],
+  "source": "campaign2_batch2_perturb_0.25_seed51001161_polish1_polish2_polish3",
+  "optimality_proven": false,
+  "verification": {
+    "valid_within_tolerance": true,
+    "tolerance_cm": 7.65e-07,
+    "min_pair_gap_cm": -7.105427357601002e-15,
+    "max_cylinder_contact_error_cm": 1.2043699371133698e-11,
+    "min_center_z_cm": 7.65,
+    "min_floor_gap_cm": 0.0,
+    "contact_kinds": [
+      "side",
+      "side",
+      "side",
+      "side",
+      "side",
+      "upper_rim",
+      "side"
+    ]
+  }
+}
