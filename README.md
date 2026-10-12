@@ -33,9 +33,7 @@ python tools/verify_packing.py docs/data/best_10.json --tolerance-cm 0.000000765
 
 配置JSONの座標・高さの単位はcm。`optimality_proven: false`は大域最適性が未証明であることを明示します。動画再生は選択した局所探索の履歴であり、6,000試行全体を再生するものではありません。ファイルハッシュは同梱物の整合性確認用で、署名や出所の証明ではありません。
 
-## 参考と利用条件
+## 参考
 
 - 探索・可視化の着想：[Yohei Nakajima — Soft-to-Rigid Packing](https://github.com/yoheinakajima/soft-to-rigid-packing)。本問題への適用結果は独立した数値実験です。
 - [Three.js](https://github.com/mrdoob/three.js) とOrbitControls：MITライセンス。ライブラリーは配信元から読み込みます。
-
-本パッケージ自身のコード・データ・図の再利用ライセンスは未指定です。公開前に権利者が方針を決めてください。閲覧公開と、改変・再配布等へのライセンス付与は別の判断です。
